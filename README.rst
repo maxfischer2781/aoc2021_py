@@ -15,6 +15,6 @@ The module is directly executable from the CLI.
 .. code:: bash
 
     # run day 3
-    python3 -m aoc2021 3 -e
+    python3 -m aoc2021 3
     # run day 4 with example code
     python3 -m aoc2021 4 -e
