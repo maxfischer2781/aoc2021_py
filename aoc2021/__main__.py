@@ -9,6 +9,7 @@ from . import day3
 from . import day4
 from . import day5
 from . import day6
+from . import day7
 
 
 class Unsolved:
@@ -23,7 +24,7 @@ class Unsolved:
         return f"No solution for day {self.day}"
 
 
-SOLUTIONS = dict(enumerate((day1, day2, day3, day4, day5, day6), start=1))
+SOLUTIONS = dict(enumerate((day1, day2, day3, day4, day5, day6, day7), start=1))
 
 
 def format_duration(delta: float):
