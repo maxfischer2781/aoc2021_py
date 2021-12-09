@@ -1,32 +1,33 @@
+from typing import Protocol, Any, Optional
 import argparse
 import time
 import pathlib
 import io
-
-from . import day1
-from . import day2
-from . import day3
-from . import day4
-from . import day5
-from . import day6
-from . import day7
-from . import day8
-from . import day9
+import importlib
 
 
-class Unsolved:
-    def __init__(self, day: int):
-        self.day = day
-
-    def solve(self, *args, **kwargs) -> tuple:
-        return ()
+class Solution(Protocol):
+    def solve(self, data: io.StringIO) -> tuple[Any, Any]:
+        raise NotImplementedError
 
     @property
-    def FORMAT(self):
-        return f"No solution for day {self.day}"
+    def FORMAT(self) -> str:
+        raise NotImplementedError
 
 
-SOLUTIONS = dict(enumerate((day1, day2, day3, day4, day5, day6, day7, day8, day9), start=1))
+def load_solution(day: int) -> Optional[Solution]:
+    """Load the solution for a given day"""
+    try:
+        module = importlib.import_module(f".day{day}", __package__)
+    except ImportError:
+        return None
+    else:
+        if not hasattr(module, "FORMAT"):
+            module.FORMAT = "Part 1: {}\nPart 2: {}"
+        return module
+
+
+SOLUTIONS = {day: load_solution(day) for day in range(1, 26)}
 
 
 def format_duration(delta: float):
@@ -40,22 +41,27 @@ def format_duration(delta: float):
 
 def run_solution(day: int, example: bool, data_dir: pathlib.Path):
     print(f"[> ### Day {day:3d} ### <]")
-    data_file = f'day{day}_ex.txt' if example else f'day{day}.txt'
-    input_path = data_dir / data_file
-    data = io.StringIO(input_path.read_text())
-    solver, template = SOLUTIONS[day].solve, SOLUTIONS[day].FORMAT.strip()
-    pre = time.time()
-    results = solver(data)
-    end = time.time()
-    print(f"[> Elapsed {format_duration(end-pre)} <]")
-    print(template.format(*results))
+    solution = load_solution(day)
+    if solution is not None:
+        data_file = f'day{day}_ex.txt' if example else f'day{day}.txt'
+        input_path = data_dir / data_file
+        data = io.StringIO(input_path.read_text())
+        solver, template = solution.solve, solution.FORMAT.strip()
+        pre = time.time()
+        results = solver(data)
+        end = time.time()
+        print(f"[> Elapsed {format_duration(end-pre)} <]")
+        print(template.format(*results))
+    else:
+        print(r"No solution yet!")
+        print("Stay tuned... 🎁")
     print(f"[> ### Day {day:3d} ### <]")
 
 
 CLI = argparse.ArgumentParser()
 CLI.add_argument(
     'DAY',
-    default=[],
+    default=[max(SOLUTIONS, key=lambda x: (SOLUTIONS[x] is not None, x))],
     nargs='*',
     type=int,
 )
@@ -73,6 +79,6 @@ CLI.add_argument(
 )
 
 opts = CLI.parse_args()
-for d in opts.DAY or [max(SOLUTIONS)]:
+for d in opts.DAY:
     assert d in SOLUTIONS, f"days {', '.join(map(str, SOLUTIONS))} available, not {d}"
     run_solution(d, opts.example, opts.data)
