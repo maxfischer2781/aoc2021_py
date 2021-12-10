@@ -36,7 +36,7 @@ def least_triangular_cost(positions: list[int]):
         triangular_cost(guess, positions) for guess in (upper_guess, lower_guess)
     )
     # search starting at the best guess
-    # The cost is strictly ascending/descengin; check if we need to search up or down
+    # The cost is strictly ascending/descending; check if we need to search up or down
     if upper_cost < lower_cost:
         direction, best_cost, best_guess = 1, upper_cost, upper_guess
     else:
