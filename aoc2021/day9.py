@@ -10,7 +10,9 @@ Part 2: {}
 def solve(in_stream: StringIO):
     heightmap = [[int(point) for point in row.strip()] for row in in_stream]
     largest_basins = sorted(basin_scan(heightmap), key=len)[-3:]
-    return sum(point + 1 for point in low_points(heightmap)), prod(map(len, largest_basins))
+    return sum(point + 1 for point in low_points(heightmap)), prod(
+        map(len, largest_basins)
+    )
 
 
 def neighbours(row: int, column: int, grid: list[list[int]]):

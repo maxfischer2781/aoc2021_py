@@ -2,6 +2,9 @@
 Advent of Code 2021 – Python Solutions
 ######################################
 
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/psf/black
+
 Solutions for `Advent of Code <https://adventofcode.com>`_ 2021 in pure Python 3.9. 🎄
 No dependencies, no speed hacks:
 pythonic code with just the standard library. 👍

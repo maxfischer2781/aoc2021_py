@@ -7,12 +7,14 @@ Part 2: {}
 
 
 class BinaryPrefixTree:
-    __slots__ = ('counts', 'children')
+    __slots__ = ("counts", "children")
 
     def __init__(self, depth=0):
         self.counts = [0, 0]
         self.children: Optional[tuple[BinaryPrefixTree, BinaryPrefixTree]] = (
-            (BinaryPrefixTree(depth-1), BinaryPrefixTree(depth-1)) if depth > 1 else None
+            (BinaryPrefixTree(depth - 1), BinaryPrefixTree(depth - 1))
+            if depth > 1
+            else None
         )
 
     def add(self, binary: str):
@@ -27,7 +29,12 @@ class BinaryPrefixTree:
         else:
             # Even if there was no item there is always a child tree at count 0
             # We need to exclude this when looking for the smaller count
-            head = 0 if (self.counts[0] and self.counts[0] <= self.counts[1]) or not self.counts[1] else 1
+            head = (
+                0
+                if (self.counts[0] and self.counts[0] <= self.counts[1])
+                or not self.counts[1]
+                else 1
+            )
         if self.children is not None:
             return str(head) + self.children[head].most_common(largest)
         else:
@@ -39,7 +46,7 @@ def solve(in_stream):
     digits = len(data[0])
     gamma_rate = most_common_binary(data)
     oxygen, co2 = stepwise_binary(data)
-    return gamma_rate * (2**digits-1 - gamma_rate), oxygen * co2
+    return gamma_rate * (2 ** digits - 1 - gamma_rate), oxygen * co2
 
 
 def most_common_binary(report: list[str]):
@@ -49,11 +56,10 @@ def most_common_binary(report: list[str]):
     counts = [0] * len(report[0])
     for line in report:
         counts = [
-            prev + 1 if digit == '1' else prev - 1
-            for prev, digit in zip(counts, line)
+            prev + 1 if digit == "1" else prev - 1 for prev, digit in zip(counts, line)
         ]
     return int(
-        ''.join('1' if count > 0 else '0' for count in counts),
+        "".join("1" if count > 0 else "0" for count in counts),
         2,
     )
 

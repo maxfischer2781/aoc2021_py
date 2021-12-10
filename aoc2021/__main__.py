@@ -43,7 +43,7 @@ def run_solution(day: int, example: bool, data_dir: pathlib.Path):
     print(f"[> ### Day {day:3d} ### <]")
     solution = load_solution(day)
     if solution is not None:
-        data_file = f'day{day}_ex.txt' if example else f'day{day}.txt'
+        data_file = f"day{day}_ex.txt" if example else f"day{day}.txt"
         input_path = data_dir / data_file
         data = io.StringIO(input_path.read_text())
         solver, template = solution.solve, solution.FORMAT.strip()
@@ -60,22 +60,17 @@ def run_solution(day: int, example: bool, data_dir: pathlib.Path):
 
 CLI = argparse.ArgumentParser()
 CLI.add_argument(
-    'DAY',
+    "DAY",
     default=[max(SOLUTIONS, key=lambda x: (SOLUTIONS[x] is not None, x))],
-    nargs='*',
+    nargs="*",
     type=int,
 )
-CLI.add_argument(
-    "-e",
-    "--example",
-    action="store_true",
-    help="use example data"
-)
+CLI.add_argument("-e", "--example", action="store_true", help="use example data")
 CLI.add_argument(
     "--data",
     type=pathlib.Path,
-    default=pathlib.Path(__file__).parent.parent / 'data',
-    help="path to directory in which data is stored"
+    default=pathlib.Path(__file__).parent.parent / "data",
+    help="path to directory in which data is stored",
 )
 
 opts = CLI.parse_args()

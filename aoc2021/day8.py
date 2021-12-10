@@ -81,16 +81,16 @@ def solve_mapping(signal: "list[str]") -> "dict[str, int]":
     d235 = by_length[3:6]
     d069 = by_length[6:9]
     # 7:acf - 1:cf
-    s_a = segment_map["a"], = d7 - d1
+    s_a = (segment_map["a"],) = d7 - d1
     s_bd = d4 - d1
     s_eg = d8 - d4 - d7
-    d0, = (digit for digit in d069 if not s_bd < digit)
-    s_d = segment_map["d"], = d8 - d0
-    s_b = segment_map["b"], = s_bd - s_d
-    d9, = (digit for digit in d069 if not s_eg < digit)
-    d6, = (digit for digit in d069 if digit != d0 and digit != d9)
-    s_e = segment_map["e"], = d8 - d9
-    s_g = segment_map["g"], = s_eg - s_e
-    s_c = segment_map["c"], = d8 - d6
-    s_f = segment_map["f"], = d1 - s_c
+    (d0,) = (digit for digit in d069 if not s_bd < digit)
+    s_d = (segment_map["d"],) = d8 - d0
+    s_b = (segment_map["b"],) = s_bd - s_d
+    (d9,) = (digit for digit in d069 if not s_eg < digit)
+    (d6,) = (digit for digit in d069 if digit != d0 and digit != d9)
+    s_e = (segment_map["e"],) = d8 - d9
+    s_g = (segment_map["g"],) = s_eg - s_e
+    s_c = (segment_map["c"],) = d8 - d6
+    s_f = (segment_map["f"],) = d1 - s_c
     return segment_map

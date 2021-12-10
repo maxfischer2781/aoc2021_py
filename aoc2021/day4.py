@@ -10,9 +10,7 @@ Part 2: {}
 class BingoBoard:
     def __init__(self, board: list[list[int]]):
         #: the combinations needed to win, i.e. horizontal/vertical groups
-        self.combinations: list[set[int]] = [
-            set(row) for row in board
-        ] + [
+        self.combinations: list[set[int]] = [set(row) for row in board] + [
             set(column) for column in zip(*board)
         ]
         #: all the numbers in this board
@@ -40,7 +38,7 @@ def read_input(data: Iterator[str]):
         raise ValueError("expected empty line after header")
     buffer = []
     for line in data:
-        if line == '\n':
+        if line == "\n":
             yield BingoBoard(buffer)
             buffer = []
         else:

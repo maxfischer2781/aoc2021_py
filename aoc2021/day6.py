@@ -26,10 +26,11 @@ def simulate(start_population: list[int], days: int):
         hatching = timed_population[0]
         # decrease remaining days
         for new_index in range(8):
-            timed_population[new_index] = timed_population[new_index+1]
+            timed_population[new_index] = timed_population[new_index + 1]
         timed_population[6] += hatching  # reset time for fish that just bred
         timed_population[8] = hatching  # long timer for newly bred fish
     return sum(timed_population.values())
+
 
 # Possible improvements:
 # - since days cover the range 0-8, use a list of length 9 instead of the Counter

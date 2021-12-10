@@ -10,7 +10,10 @@ def solve(in_stream: StringIO) -> tuple[object, object]:
     # >: 25137 points.
     corrupted_cost = {")": 3, "]": 57, "}": 1197, ">": 25137}
     missing_scores = sorted(map(score_missing, find_missing(instructions)))
-    return sum(map(corrupted_cost.get, find_corrupted(instructions))), missing_scores[len(missing_scores)//2]
+    return (
+        sum(map(corrupted_cost.get, find_corrupted(instructions))),
+        missing_scores[len(missing_scores) // 2],
+    )
 
 
 # Symbol pairs are always *nested*: We can have ( [] {} ) but not ( [} {] )
@@ -25,7 +28,7 @@ def find_corrupted(instructions: list[str]) -> Iterator[str]:
     for line in instructions:
         stack = []
         for symbol in line:
-            if symbol in '([{<':
+            if symbol in "([{<":
                 stack.append(symbol)
             else:
                 # test whether the pair of open/close symbols matches
@@ -39,7 +42,7 @@ def find_missing(instructions: list[str]) -> Iterator[list[str]]:
     for line in instructions:
         stack = []
         for symbol in line:
-            if symbol in '([{<':
+            if symbol in "([{<":
                 stack.append(symbol)
             else:
                 opening = stack.pop()
