@@ -54,7 +54,9 @@ def low_points(heightmap: list[list[int]]):
 # guaranteed that the left-over points belong to a new cluster.
 def basin_scan(heightmap: list[list[int]]):
     """Scan for basins, i.e. connected points separated by height 9"""
-    # set for quick lookup if a specific point may be part of a basin
+    # Set for quick lookup if a specific point may be part of a basin
+    # Due to O(1) containment check, arbitrary draw and deletion, this is an
+    # efficient way to keep track of points we still have to visit.
     candidates = {
         (row, column)
         for row, columns in enumerate(heightmap)
@@ -67,9 +69,11 @@ def basin_scan(heightmap: list[list[int]]):
         # It does not matter at which point we start: every point is part of one basin;
         # let the candidates set arbitrarily select one to start at.
         current_cluster = [candidates.pop()]
-        # This exploits that it is safe to iterate over a list while appending to it.
+        # The same list can be used to store the result as well as nodes from which
+        # we still have to search for neighbours. This exploits that it is safe to
+        # iterate over a list while appending to it.
         # The cluster content is guaranteed to be unique and finite since we draw it
-        # from the finite-size candidate set.
+        # from the finite candidate set.
         for point in current_cluster:
             for nb in neighbours(*point, heightmap):
                 if nb in candidates:
