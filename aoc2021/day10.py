@@ -3,11 +3,11 @@ from io import StringIO
 
 
 def solve(in_stream: StringIO) -> tuple[object, object]:
+    instructions = [line.strip() for line in in_stream]
     # ): 3 points.
     # ]: 57 points.
     # }: 1197 points.
     # >: 25137 points.
-    instructions = [line.strip() for line in in_stream]
     corrupted_cost = {")": 3, "]": 57, "}": 1197, ">": 25137}
     missing_scores = sorted(map(score_missing, find_missing(instructions)))
     return sum(map(corrupted_cost.get, find_corrupted(instructions))), missing_scores[len(missing_scores)//2]
@@ -28,6 +28,7 @@ def find_corrupted(instructions: list[str]) -> Iterator[str]:
             if symbol in '([{<':
                 stack.append(symbol)
             else:
+                # test whether the pair of open/close symbols matches
                 opening = stack.pop()
                 if opening + symbol not in {"()", "[]", "{}", "<>"}:
                     yield symbol
@@ -49,6 +50,7 @@ def find_missing(instructions: list[str]) -> Iterator[list[str]]:
 
 
 def score_missing(stack: list[str]) -> int:
+    """Calculate the score of fixing an incomplete instruction stack"""
     # ): 1 point.
     # ]: 2 points.
     # }: 3 points.

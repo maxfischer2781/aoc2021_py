@@ -12,7 +12,13 @@ def solve(in_stream: StringIO):
     return simulate(start_population, 80), simulate(start_population, 256)
 
 
+# This is a straightforward translation of the task description
+# The only but very major optimisation is that instead of tracking each fish with
+# separate hatching time, we only track the number of fish per hatching time. This
+# means we stay at a constant sized list of length 9 (from 0 upt to 8 days) no matter
+# the population. As a result, each day has exactly the same cost to calculate.
 def simulate(start_population: list[int], days: int):
+    """Simulate the population expanding over several `days`"""
     # A mapping of "remaining days" => "population count"
     timed_population = Counter(start_population)
     for _day in range(days):

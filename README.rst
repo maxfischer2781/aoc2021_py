@@ -7,6 +7,10 @@ No dependencies, no speed hacks:
 pythonic code with just the standard library. 👍
 Well, unless I'm too annoyed by the challenge of the day. 🤪
 
+Starting at day 5, the code includes comments on coding patterns and algorithms. 📝
+This should keep the code understandable even for people new to Python or
+not familiar with the specific algorithm. 🤔
+
 Usage 🎅🤶
 --------
 

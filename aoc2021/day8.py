@@ -15,30 +15,18 @@ def solve(in_stream: StringIO):
 
 
 def unique_output(patterns):
-    return sum(length in (2, 4, 3, 7) for _, output in patterns for length in map(len, output))
+    """Check how many outputs correspond to unique patterns"""
+    # unique numbers have 2, 4, 3, or 7 elements – we do not care which they are exactly
+    # sum'ing booleans is equivalent to counting 1 for each True value
+    return sum(
+        length in (2, 4, 3, 7) for _, output in patterns for length in map(len, output)
+    )
 
 
-def output_values(patterns):
-    for signal, output in patterns:
-        segment_map = solve_mapping(signal)
-        segment_translation = str.maketrans(
-            {value: key for key, value in segment_map.items()}
-        )
-        total = 0
-        for i, digit in enumerate(reversed(output)):
-            value = segments[frozenset(digit.translate(segment_translation))]
-            total += value * (10 ** i)
-        yield total
-
-
-# Display:
-#  aa
-# b  c
-# b  c
-#  dd
-# e  f
-# e  f
-#  gg
+# Map from display panel combinations to their respective values
+# We use frozensets as keys so that we do not have to care about
+# the order of panels in a combination. Unlike normal sets, frozensets
+# are immutable and thus hashable.
 segments = {
     frozenset("abcefg"): 0,
     frozenset("cf"): 1,
@@ -53,7 +41,36 @@ segments = {
 }
 
 
+def output_values(patterns):
+    """Reconstruct the sum of outputs per pattern"""
+    for signal, output in patterns:
+        segment_map = solve_mapping(signal)
+        # our solver provides real -> display mapping, but we need the reverse
+        segment_translation = str.maketrans(
+            {value: key for key, value in segment_map.items()}
+        )
+        total = 0
+        # We enumerate in reverse to know the place of each digit i.e. the power of ten
+        for i, digit in enumerate(reversed(output)):
+            value = segments[frozenset(digit.translate(segment_translation))]
+            total += value * (10 ** i)
+        yield total
+
+
 def solve_mapping(signal: "list[str]") -> "dict[str, int]":
+    """Reconstruct the real -> display panel mapping"""
+    # There is no deeper wisdom to this: It is the result of manually solving the panel
+    # overlap and number identification.
+    #
+    # The s_XY and dXY variables are sets of display panels corresponding to a specific
+    # set of real panels or numbers (which are also sets of all their panels). This lets
+    # us "subtract" the set of panels/numbers.
+    # For example, number 1 (`d1`) and 7 (`d7`) are the panels {"c", "f"} and
+    # {"a", "c", "f"} – their set difference (`d7 - d1`) is just the panel {"a"}.
+    #
+    # When an operation is guaranteed to give one result, we use unpacking assignment
+    # to get the one result – for example, `panel_a, = {"a"}` (note the comma) would
+    # assign `"a`" to `panel_a` by unpacking the set.
     segment_map = {}
     by_length = sorted(map(set, signal), key=len)
     # uniquely identifiable numbers
