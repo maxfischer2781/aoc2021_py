@@ -3,14 +3,14 @@ from io import StringIO
 from collections import Counter
 
 
-RULES = dict[tuple[str, str], str]
+RULES = dict[str, str]
 
 
 def read_instructions(in_stream: StringIO) -> tuple[str, RULES]:
     template = next(in_stream).strip()
     next(in_stream)
     return template, {
-        tuple(pair.strip()): insertion.strip()
+        pair[:2]: pair[0] + insertion.strip() + pair[1]
         for pair, insertion in (rule.split("->") for rule in in_stream)
     }
 
@@ -30,17 +30,17 @@ def expand_count(template: str, steps: int, rules: RULES, memo) -> Counter:
             expanded = memo[key]
         except KeyError:
             if steps == 1:
-                expanded = memo[key] = Counter((rules[pair], *pair))
+                expanded = memo[key] = Counter(rules[pair])
             else:
-                expanded = memo[key] = expand_count(pair[0] + rules[pair] + pair[-1], steps - 1, rules, memo)
+                expanded = memo[key] = expand_count(rules[pair], steps - 1, rules, memo)
         result[pair[0]] -= 1
         result += expanded
     return result
 
 
-def pairwise(itr: Iterable[str]) -> Iterable[tuple[str, str]]:
+def pairwise(itr: Iterable[str]) -> Iterable[str]:
     iterator = iter(itr)
     prev = next(iterator)
     for current in iterator:
-        yield prev, current
+        yield prev + current
         prev = current
