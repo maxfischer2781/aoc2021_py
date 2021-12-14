@@ -17,9 +17,15 @@ def read_instructions(in_stream: StringIO) -> tuple[str, RULES]:
 
 def solve(in_stream: StringIO) -> tuple[object, object]:
     template, rules = read_instructions(in_stream)
-    counts = expand_count(template, 10, rules, {}).most_common()
-    counts_40 = expand_count(template, 40, rules, {}).most_common()
-    return counts[0][1] - counts[-1][1], counts_40[0][1] - counts_40[-1][1]
+    # we could speed up the second expansion by using the memo of the first
+    # that is only about 10% extra performance, though
+    return expand_quantity(template, 10, rules), expand_quantity(template, 40, rules)
+
+
+def expand_quantity(template: str, steps: int, rules: RULES) -> int:
+    """Compute the quantity of extremes after ``steps`` times expanding ``template``"""
+    counts = expand_count(template, steps, rules, {}).most_common()
+    return counts[0][1] - counts[-1][1]
 
 
 def expand_count(template: str, steps: int, rules: RULES, memo) -> Counter:
