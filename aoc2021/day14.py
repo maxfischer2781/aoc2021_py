@@ -29,6 +29,7 @@ def expand_quantity(template: str, steps: int, rules: RULES) -> int:
 
 
 def expand_count(template: str, steps: int, rules: RULES, memo) -> Counter:
+    """Expand ``template`` a total of ``steps`` times, counting its characters"""
     result = Counter(template[0])
     for pair in pairwise(template):
         key = *pair, steps
@@ -45,6 +46,7 @@ def expand_count(template: str, steps: int, rules: RULES, memo) -> Counter:
 
 
 def pairwise(itr: Iterable[str]) -> Iterable[str]:
+    """Iterate over character pairs in a string"""
     iterator = iter(itr)
     prev = next(iterator)
     for current in iterator:
