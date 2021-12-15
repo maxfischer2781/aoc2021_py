@@ -28,7 +28,7 @@ def manhattan(a, b):
 def dijkstra(risk_map: list[list[int]]):
     costs = {(0, 0): 0}
     seen = set()
-    order = sorted(((cost, node) for node, cost in costs.items()))
+    order = [(0, (0, 0))]
     target = len(risk_map) - 1, len(risk_map[0]) - 1
     while costs:
         best_cost, best_node = order.pop(0)
@@ -45,12 +45,6 @@ def dijkstra(risk_map: list[list[int]]):
             new_cost = best_cost + risk_map[nb[0]][nb[1]]
             if new_cost < nb_cost:
                 costs[nb] = new_cost
-                try:
-                    nb_index = order.index((nb_cost, nb))
-                except ValueError:
-                    pass
-                else:
-                    order.pop(nb_index)
                 bisect.insort(order, (new_cost, nb))
 
 
