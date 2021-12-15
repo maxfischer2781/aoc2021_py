@@ -43,8 +43,7 @@ def run_solution(day: int, example: bool, data_dir: pathlib.Path):
     print(f"[> ### Day {day:3d} ### <]")
     solution = load_solution(day)
     if solution is not None:
-        data_file = f"day{day}_ex.txt" if example else f"day{day}.txt"
-        input_path = data_dir / data_file
+        input_path = data_dir / (f"day{day}_ex.txt" if example else f"day{day}.txt")
         data = io.StringIO(input_path.read_text())
         solver, template = solution.solve, solution.FORMAT.strip()
         pre = time.time()
@@ -53,7 +52,7 @@ def run_solution(day: int, example: bool, data_dir: pathlib.Path):
         print(f"[> Elapsed {format_duration(end-pre)} <]")
         print(template.format(*results))
     else:
-        print(r"No solution yet!")
+        print("No solution yet!")
         print("Stay tuned... 🎁")
     print(f"[> ### Day {day:3d} ### <]")
 
