@@ -1,13 +1,16 @@
 from typing import NamedTuple, Any, Union
 from io import StringIO
 import math
+import operator
 
 
 def le_int(binary: list[int]) -> int:
-    return int(''.join(map(str, binary)), 2)
+    """Convert a sequence of bits as little endian to an integer"""
+    return int("".join(map(str, binary)), 2)
 
 
 class Value(NamedTuple):
+    """A packet containing an integer value"""
     version: int
     type_id: int
     payload: int
@@ -15,17 +18,19 @@ class Value(NamedTuple):
 
     @classmethod
     def from_binary(cls, message: list[int]):
+        """Parse a Value packet from a binary message"""
         version = le_int(message[:3])
         type_id = le_int(message[3:6])
         digits = []
         for index in range(6, len(message), 5):
-            digits += message[index+1:index+5]
+            digits += message[index + 1 : index + 5]
             if message[index] == 0:
                 break
         return cls(version, type_id, le_int(digits), index + 5)
 
 
 class Operator(NamedTuple):
+    """A packet encoding an operation and containing operators"""
     version: int
     type_id: int
     payloads: list[Any]
@@ -33,16 +38,17 @@ class Operator(NamedTuple):
 
     @classmethod
     def from_binary(cls, message: list[int]):
+        """Parse an Operator packet from a binary message"""
         header = le_int(message[:3]), le_int(message[3:6])
         if message[6] == 0:
-            n_bits = le_int(message[6+1:6+16])
-            return cls.from_bitrange(message[6+16:6+16+n_bits], header)
+            n_bits = le_int(message[6 + 1 : 6 + 16])
+            return cls._from_bits(message[6 + 16 : 6 + 16 + n_bits], header)
         else:
-            n_payloads = le_int(message[6+1:6+12])
-            return cls.from_payload_range(message[6+12:], n_payloads, header)
+            n_payloads = le_int(message[6 + 1 : 6 + 12])
+            return cls._from_payloads(message[6 + 12 :], n_payloads, header)
 
     @classmethod
-    def from_bitrange(cls, message: list[int], header: tuple[int, int]):
+    def _from_bits(cls, message: list[int], header: tuple[int, int]):
         length = 0
         payloads = []
         while length < len(message):
@@ -51,7 +57,7 @@ class Operator(NamedTuple):
         return cls(*header, payloads, length + 22)
 
     @classmethod
-    def from_payload_range(cls, message: list[int], count: int, header: tuple[int, int]):
+    def _from_payloads(cls, message: list[int], count: int, header: tuple[int, int]):
         length = 0
         payloads = []
         for _ in range(count):
@@ -64,6 +70,7 @@ PACKET = Union[Value, Operator]
 
 
 def parse_packet(message: list[int]) -> PACKET:
+    """Parse a packet from a binary message"""
     if message[3:6] == [1, 0, 0]:
         return Value.from_binary(message)
     else:
@@ -76,31 +83,36 @@ def solve(in_stream: StringIO) -> tuple[object, object]:
     return sum_versions(root), evaluate(root)
 
 
-def to_binary(message: str) -> list[int]:
-    return [int(bit) for hexdigit in message for bit in f"{int(hexdigit, 16):04b}"]
+def to_binary(hex_message: str) -> list[int]:
+    """Convert a message from hex digits to binary digits"""
+    return [int(bit) for hexdigit in hex_message for bit in f"{int(hexdigit, 16):04b}"]
 
 
 def sum_versions(root: PACKET):
+    """Sum up all version in the packet hierarchy"""
     if isinstance(root, Value):
         return root.version
     else:
         return root.version + sum(map(sum_versions, root.payloads))
 
 
+# dispatch of operations from the type_id to a function implementing the operation
 OPERATORS = {
     0: sum,
     1: math.prod,
     2: min,
     3: max,
-    5: lambda lr: next(lr) > next(lr),
-    6: lambda lr: next(lr) < next(lr),
-    7: lambda lr: next(lr) == next(lr),
+    # the `operator.XY` functions take a pair of operators
+    # use a lambda to unpack the iterable of operators to a pair of separate operators.
+    5: lambda iterator: operator.gt(*iterator),
+    6: lambda iterator: operator.lt(*iterator),
+    7: lambda iterator: operator.eq(*iterator),
 }
 
 
 def evaluate(root: PACKET):
+    """Evaluate the operations in the packet hierarchy"""
     if isinstance(root, Value):
         return root.payload
     else:
-        operation = OPERATORS[root.type_id]
-        return operation(map(evaluate, root.payloads))
+        return OPERATORS[root.type_id](map(evaluate, root.payloads))
