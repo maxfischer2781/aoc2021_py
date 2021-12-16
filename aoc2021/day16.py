@@ -7,12 +7,6 @@ def le_int(binary: list[int]) -> int:
     return int(''.join(map(str, binary)), 2)
 
 
-def multiple(num: int, of: int) -> int:
-    for pad in range(0, of):
-        if (num + pad) % of == 0:
-            return num + pad
-
-
 class Packet(NamedTuple):
     version: int
     type_id: int
@@ -39,11 +33,11 @@ class Value(NamedTuple):
     @classmethod
     def from_binary(cls, message: list[int]):
         digits = []
-        for count, index in enumerate(range(0, len(message), 5), start=1):
+        for index in range(0, len(message), 5):
             digits += message[index+1:index+5]
             if message[index] == 0:
                 break
-        return cls(le_int(digits), 5 * count)
+        return cls(le_int(digits), index + 5)
 
 
 class Operator(NamedTuple):
