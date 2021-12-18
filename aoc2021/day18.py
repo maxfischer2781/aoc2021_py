@@ -4,8 +4,8 @@ import math
 
 
 # We use two separate representations of "Snail Numbers":
-# - A flat sequence of node with depth.
-# - A nested tree of pairs.
+# - A flat sequence of nodes of depth-and-value.
+# - A nested tree of pairs of trees-or-values.
 # The flat sequence is good for addition and reduce, since it allows direct access
 # to left/right neighbours across pairs.
 # The nested tree is good for magnitude and formatting, since it corresponds to the
@@ -13,17 +13,17 @@ import math
 
 
 @dataclass()
-class Value:
+class Node:
     number: int
     depth: int
 
 
-SnailNumber = list[Value]
+FlatNumber = list[Node]
 
 
-def add(left: SnailNumber, right: SnailNumber) -> SnailNumber:
+def add(left: FlatNumber, right: FlatNumber) -> FlatNumber:
     return [
-        Value(number=val.number, depth=val.depth + 1)
+        Node(number=val.number, depth=val.depth + 1)
         for part in (left, right)
         for val in part
     ]
@@ -32,7 +32,7 @@ def add(left: SnailNumber, right: SnailNumber) -> SnailNumber:
 TreeNumber = "list[Union[int, TreeNumber]]"
 
 
-def pairs(sn: SnailNumber) -> TreeNumber:
+def pairs(sn: FlatNumber) -> TreeNumber:
     depth = 1
     tree = []
     heads = [tree]
@@ -59,7 +59,7 @@ def magnitude(pair: TreeNumber) -> int:
     return 3 * left + 2 * right
 
 
-def reduce(sn: SnailNumber) -> SnailNumber:
+def reduce(sn: FlatNumber) -> FlatNumber:
     while True:
         # explode
         for i, elem in enumerate(sn):
@@ -78,7 +78,7 @@ def reduce(sn: SnailNumber) -> SnailNumber:
                 if elem.number > 9:
                     sn.insert(
                         i+1,
-                        Value(number=math.ceil(elem.number / 2), depth=elem.depth+1)
+                        Node(number=math.ceil(elem.number / 2), depth=elem.depth + 1)
                     )
                     elem.number //= 2
                     elem.depth += 1
@@ -88,7 +88,7 @@ def reduce(sn: SnailNumber) -> SnailNumber:
     return sn
 
 
-def parse_sn(literal: str) -> SnailNumber:
+def parse_sn(literal: str) -> FlatNumber:
     sn = []
     depth = 0
     for token in literal:
@@ -99,11 +99,11 @@ def parse_sn(literal: str) -> SnailNumber:
         elif token == "]":
             depth -= 1
         else:
-            sn.append(Value(number=int(token), depth=depth))
+            sn.append(Node(number=int(token), depth=depth))
     return sn
 
 
-def format_sn(sn: SnailNumber) -> str:
+def format_sn(sn: FlatNumber) -> str:
     return str(pairs(sn)).replace(" ", "")
 
 
@@ -112,7 +112,7 @@ def solve(in_stream: StringIO) -> tuple[object, object]:
     return magnitude(pairs(add_all(numbers))), highest_magnitude(numbers)
 
 
-def add_all(numbers: list[SnailNumber]):
+def add_all(numbers: list[FlatNumber]):
     iterator = iter(numbers)
     current = next(iterator)
     for number in iterator:
@@ -120,7 +120,7 @@ def add_all(numbers: list[SnailNumber]):
     return current
 
 
-def highest_magnitude(numbers: list[SnailNumber]):
+def highest_magnitude(numbers: list[FlatNumber]):
     highest = 0
     for i in range(len(numbers)):
         for j in range(i+1, len(numbers)):
