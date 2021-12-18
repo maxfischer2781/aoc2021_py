@@ -62,16 +62,24 @@ def magnitude(pair: TreeNumber) -> int:
 def reduce(sn: FlatNumber) -> FlatNumber:
     while True:
         # explode
+        # It is safe to do a single pass for exploding, provided our input is valid:
+        # - The depth of all involved elements is reduced below the threshold, since
+        #   `add` only pushes elements just above the threshold. We do not have to
+        #   re-visit an element directly after exploding it.
+        # - As per implementation, a `list` iterator just traverses the *indices*. As
+        #   we demote the i'th element and remove its sibling i+1'th element, the "next"
+        #   element to potentially explode moves down to i+1.
         for i, elem in enumerate(sn):
             if elem.depth > 4 and elem.depth == sn[i+1].depth:
                 if i > 0:
                     sn[i-1].number += elem.number
                 if i < len(sn) - 2:
                     sn[i+2].number += sn[i+1].number
+                # Transform [a=x, b=y], c=... to just a=0, c=...; this means the next
+                # element to iterate now is the unvisited c and we naturally skip b.
                 elem.number = 0
                 elem.depth -= 1
                 sn.pop(i+1)
-                break
         else:
             # split
             for i, elem in enumerate(sn):
@@ -82,7 +90,9 @@ def reduce(sn: FlatNumber) -> FlatNumber:
                     )
                     elem.number //= 2
                     elem.depth += 1
-                    break
+                    # resume the loop unless the node needs to explode/split again
+                    if elem.depth > 4 or elem.number > 9:
+                        break
             else:
                 break
     return sn
