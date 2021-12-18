@@ -12,6 +12,8 @@ import math
 # initial left/right pairing.
 
 
+# I usually prefer `typing.NamedTuple`, since it enforces robust and clean code.
+# The algorithms here are more suitable to mutation, though.
 @dataclass()
 class Node:
     number: int
