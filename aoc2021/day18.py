@@ -21,14 +21,6 @@ class Node:
 FlatNumber = list[Node]
 
 
-def add(left: FlatNumber, right: FlatNumber) -> FlatNumber:
-    return [
-        Node(number=val.number, depth=val.depth + 1)
-        for part in (left, right)
-        for val in part
-    ]
-
-
 TreeNumber = "list[Union[int, TreeNumber]]"
 
 
@@ -98,6 +90,14 @@ def reduce(sn: FlatNumber) -> FlatNumber:
     return sn
 
 
+def add(left: FlatNumber, right: FlatNumber) -> FlatNumber:
+    return reduce([
+        Node(number=val.number, depth=val.depth + 1)
+        for part in (left, right)
+        for val in part
+    ])
+
+
 def parse_sn(literal: str) -> FlatNumber:
     sn = []
     depth = 0
@@ -126,7 +126,7 @@ def add_all(numbers: list[FlatNumber]):
     iterator = iter(numbers)
     current = next(iterator)
     for number in iterator:
-        current = reduce(add(current, number))
+        current = add(current, number)
     return current
 
 
@@ -134,7 +134,7 @@ def highest_magnitude(numbers: list[FlatNumber]):
     highest = 0
     for i in range(len(numbers)):
         for j in range(i+1, len(numbers)):
-            mag = magnitude(pairs(reduce(add(numbers[i], numbers[j]))))
+            mag = magnitude(pairs(add(numbers[i], numbers[j])))
             if mag > highest:
                 highest = mag
     return highest
