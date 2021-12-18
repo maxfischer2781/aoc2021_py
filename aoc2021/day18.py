@@ -1,6 +1,7 @@
 from io import StringIO
 from dataclasses import dataclass
 import math
+import functools
 
 
 # We use two separate representations of "Snail Numbers":
@@ -125,11 +126,7 @@ def solve(in_stream: StringIO) -> tuple[object, object]:
 
 
 def add_all(numbers: list[FlatNumber]):
-    iterator = iter(numbers)
-    current = next(iterator)
-    for number in iterator:
-        current = add(current, number)
-    return current
+    return functools.reduce(add, numbers)
 
 
 def highest_magnitude(numbers: list[FlatNumber]):
