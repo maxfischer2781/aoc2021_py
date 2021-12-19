@@ -11,6 +11,7 @@ def le_int(binary: list[int]) -> int:
 
 class Value(NamedTuple):
     """A packet containing an integer value"""
+
     version: int
     type_id: int
     payload: int
@@ -31,6 +32,7 @@ class Value(NamedTuple):
 
 class Operator(NamedTuple):
     """A packet encoding an operation and containing operators"""
+
     version: int
     type_id: int
     payloads: list[Any]

@@ -47,10 +47,7 @@ def pairs(sn: FlatNumber) -> TreeNumber:
 
 
 def magnitude(pair: TreeNumber) -> int:
-    left, right = (
-        part if isinstance(part, int) else magnitude(part)
-        for part in pair
-    )
+    left, right = (part if isinstance(part, int) else magnitude(part) for part in pair)
     return 3 * left + 2 * right
 
 
@@ -65,23 +62,23 @@ def reduce(sn: FlatNumber) -> FlatNumber:
         #   we demote the i'th element and remove its sibling i+1'th element, the "next"
         #   element to potentially explode moves down to i+1.
         for i, elem in enumerate(sn):
-            if elem.depth > 4 and elem.depth == sn[i+1].depth:
+            if elem.depth > 4 and elem.depth == sn[i + 1].depth:
                 if i > 0:
-                    sn[i-1].number += elem.number
+                    sn[i - 1].number += elem.number
                 if i < len(sn) - 2:
-                    sn[i+2].number += sn[i+1].number
+                    sn[i + 2].number += sn[i + 1].number
                 # Transform [a=x, b=y], c=... to just a=0, c=...; this means the next
                 # element to iterate now is the unvisited c and we naturally skip b.
                 elem.number = 0
                 elem.depth -= 1
-                sn.pop(i+1)
+                sn.pop(i + 1)
         else:
             # split
             for i, elem in enumerate(sn):
                 if elem.number > 9:
                     sn.insert(
-                        i+1,
-                        Node(number=math.ceil(elem.number / 2), depth=elem.depth + 1)
+                        i + 1,
+                        Node(number=math.ceil(elem.number / 2), depth=elem.depth + 1),
                     )
                     elem.number //= 2
                     elem.depth += 1
@@ -94,11 +91,13 @@ def reduce(sn: FlatNumber) -> FlatNumber:
 
 
 def add(left: FlatNumber, right: FlatNumber) -> FlatNumber:
-    return reduce([
-        Node(number=val.number, depth=val.depth + 1)
-        for part in (left, right)
-        for val in part
-    ])
+    return reduce(
+        [
+            Node(number=val.number, depth=val.depth + 1)
+            for part in (left, right)
+            for val in part
+        ]
+    )
 
 
 def parse_sn(literal: str) -> FlatNumber:
@@ -132,7 +131,7 @@ def add_all(numbers: list[FlatNumber]):
 def highest_magnitude(numbers: list[FlatNumber]):
     highest = 0
     for i in range(len(numbers)):
-        for j in range(i+1, len(numbers)):
+        for j in range(i + 1, len(numbers)):
             mag = magnitude(pairs(add(numbers[i], numbers[j])))
             if mag > highest:
                 highest = mag

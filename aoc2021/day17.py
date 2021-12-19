@@ -10,14 +10,20 @@ class Target(NamedTuple):
     y_max: int
 
     def __contains__(self, item: tuple[int, int]):
-        return self.x_min <= item[0] <= self.x_max and self.y_min <= item[1] <= self.y_max
+        return (
+            self.x_min <= item[0] <= self.x_max and self.y_min <= item[1] <= self.y_max
+        )
 
     @classmethod
     def parse(cls, instruction: str):
         # target area: x=20..30, y=-10..-5
         x_part, y_part = (part.split("=")[-1] for part in instruction.split(","))
         return cls(
-            *(bound for part in (x_part, y_part) for bound in map(int, part.split("..")))
+            *(
+                bound
+                for part in (x_part, y_part)
+                for bound in map(int, part.split(".."))
+            )
         )
 
 

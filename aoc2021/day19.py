@@ -28,7 +28,7 @@ def pair_key(a: COORD, b: COORD) -> int:
     # Distance between a and b, squared
     # Since we do not need the precise distance, keeping the square is faster
     # (saves computing the square root) and an integer (avoiding float precision).
-    return sum(abs(ai - bi)**2 for ai, bi in zip(a, b))
+    return sum(abs(ai - bi) ** 2 for ai, bi in zip(a, b))
 
 
 def shift(a: COORD, b: COORD) -> COORD:
@@ -38,6 +38,7 @@ def shift(a: COORD, b: COORD) -> COORD:
 
 class Scanner:
     """A scanner and all its beacon coordinates"""
+
     def __init__(self, ident: int, *beacons: COORD, offset: COORD = None):
         self.ident = ident
         self.beacons = beacons
@@ -51,8 +52,10 @@ class Scanner:
         """Reorient the scanner, adjusting the beacon coordinates and offset"""
         beacons = [
             tuple(
-                b - o for b, o in
-                zip(orient(permute(beacon, permutation), orientation), offset)
+                b - o
+                for b, o in zip(
+                    orient(permute(beacon, permutation), orientation), offset
+                )
             )
             for beacon in self.beacons
         ]
@@ -61,11 +64,13 @@ class Scanner:
         self.__dict__ = clone.__dict__
 
     @staticmethod
-    def _distances(beacons) -> tuple[Counter[int], dict[int, list[tuple[COORD, COORD]]]]:
+    def _distances(
+        beacons,
+    ) -> tuple[Counter[int], dict[int, list[tuple[COORD, COORD]]]]:
         profile = Counter()
         distances = {}
         for i in range(len(beacons)):
-            for j in range(i+1, len(beacons)):
+            for j in range(i + 1, len(beacons)):
                 # compute an ID that is likely to match for the same beacon pairs under
                 # any transformation, and unlikely to match for distinct beacons
                 pair_id = pair_key(beacons[i], beacons[j])
@@ -130,9 +135,10 @@ def reorient_all(scanners: list[Scanner]):
                 # Its intersection is an upper bound on how many beacons are identical.
                 # TODO: The profile is about *pairs*. Are we too pessimistic and should
                 #       check for overlap//2 instead?
-                if sum(
-                    (candidate_scanner.profile & fixed_scanner.profile).values()
-                ) >= overlap:
+                if (
+                    sum((candidate_scanner.profile & fixed_scanner.profile).values())
+                    >= overlap
+                ):
                     if reorient(fixed_scanner, candidate_scanner):
                         fixed.add(candidate_scanner)
                         outstanding.remove(candidate_scanner)
@@ -171,14 +177,15 @@ def reorient(fixed: Scanner, candidate: Scanner) -> bool:
                 ):
                     continue
                 permutation = tuple(
-                    abs_candidate_shift.index(abs(fs))
-                    for fs in abs_fixed_shift
+                    abs_candidate_shift.index(abs(fs)) for fs in abs_fixed_shift
                 )
                 # After permutation, the difference in signs hints which axes need
                 # to be mirrored.
                 signs = tuple(
-                    cs//fs
-                    for cs, fs in zip(permute(candidate_shift, permutation), fixed_shift)
+                    cs // fs
+                    for cs, fs in zip(
+                        permute(candidate_shift, permutation), fixed_shift
+                    )
                 )
                 # The orientation is *not* unique from the signs. Since
                 # `shift(a, b) == -shift(b, a)` we may be off by factor -1 if we took
@@ -187,8 +194,14 @@ def reorient(fixed: Scanner, candidate: Scanner) -> bool:
                 for orientation in (signs, tuple(-o for o in signs)):
                     for candidate_beacon in candidate_beacons:
                         for fixed_beacon in fixed_beacons:
-                            translated = orient(permute(candidate_beacon, permutation), orientation)
-                            translation[permutation, orientation, shift(translated, fixed_beacon)] += 1
+                            translated = orient(
+                                permute(candidate_beacon, permutation), orientation
+                            )
+                            translation[
+                                permutation,
+                                orientation,
+                                shift(translated, fixed_beacon),
+                            ] += 1
     # the most common orientation
     [[[permutation, orientation, offset], count]] = translation.most_common(1)
     # safety measure in case we did not manage to find a reorientation
