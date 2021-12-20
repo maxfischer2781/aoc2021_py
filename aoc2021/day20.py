@@ -40,9 +40,11 @@ def solve(in_stream: StringIO) -> tuple[object, object]:
 
 def neighbours(row, column) -> Iterable[tuple[int, int]]:
     """Compute the neighbour positions of (row, column)"""
-    for row_offset in (-1, 0, 1):
-        for column_offset in (-1, 0, 1):
-            yield row + row_offset, column + column_offset
+    return [
+        (row + row_offset, column + column_offset)
+        for row_offset in (-1, 0, 1)
+        for column_offset in (-1, 0, 1)
+    ]
 
 
 def enhance(image: IMAGE_MASK, key: str) -> IMAGE_MASK:
