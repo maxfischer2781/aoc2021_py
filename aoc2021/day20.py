@@ -1,5 +1,5 @@
 from io import StringIO
-from typing import Iterable
+from typing import Iterable, Iterator
 from functools import lru_cache
 
 
@@ -59,7 +59,7 @@ def enhance(image: IMAGE_MASK, key: str) -> IMAGE_MASK:
     for row in range(min_row-2, max_row+3):
         for column in range(min_column - 2, max_column + 3):
             index = int(
-                ''.join('1' if nb in mask else '0' for nb in neighbours(row, column)),
+                ''.join(['1' if nb in mask else '0' for nb in neighbours(row, column)]),
                 2,
             )
             if inverted:
@@ -69,8 +69,16 @@ def enhance(image: IMAGE_MASK, key: str) -> IMAGE_MASK:
     return new_mask, new_inverted
 
 
+def minmax(it: Iterator[int]) -> tuple[int, int]:
+    best_min = best_max = next(it)
+    for item in it:
+        if item < best_min:
+            best_min = item
+        elif best_max < item:
+            best_max = item
+    return best_min, best_max
+
+
 def bounds(image: IMAGE_MASK) -> tuple[tuple[int, int], tuple[int, int]]:
     # (min_row, max_row), (min_column, max_column)
-    rows = sorted(row for row, _ in image[0])
-    columns = sorted(column for _, column in image[0])
-    return (rows[0], rows[-1]), (columns[0], columns[-1])
+    return minmax(row for row, _ in image[0]), minmax(column for _, column in image[0])
