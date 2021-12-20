@@ -1,3 +1,4 @@
+from typing import Hashable
 from io import StringIO
 from collections import Counter
 import ast
@@ -7,6 +8,8 @@ import ast
 # While the description phrases the Scanner orientation in terms of x, y, z rotations,
 # there is actually no need to figure out the actual rotations. It is sufficient to
 # compute the permutations and mirroring to *transform* a rotated position back.
+# The main trick of this approach is the `pair_key` function. It is the heuristic for
+# picking similar scanner views.
 
 
 COORD = tuple[int, ...]
@@ -23,11 +26,17 @@ def orient(a: COORD, by: tuple[int, ...]) -> COORD:
     return tuple(sign * value for value, sign in zip(a, by))
 
 
-def pair_key(a: COORD, b: COORD) -> int:
+def pair_key(a: COORD, b: COORD) -> Hashable:
     """Identifier for pairs of coordinates without position, permutation, orientation"""
+    # This is the core of the solution: For each scanner we assign all pairs of beacons
+    # a `pair_key` that is independent of the scanner. The key does not have to be
+    # a unique identifier, we use it to guess which pairs and thus scanners overlap.
+    # The more likely they key is to differ between independent pairs, the better
+    # our algorithm works – we have less cases to reject when trying a match.
+    #
     # Distance between a and b, squared
     # Since we do not need the precise distance, keeping the square is faster
-    # (saves computing the square root) and an integer (avoiding float precision).
+    # (saves computing the square root) and an integer (avoids float [im]precision).
     return sum(abs(ai - bi) ** 2 for ai, bi in zip(a, b))
 
 
@@ -204,8 +213,8 @@ def reorient(fixed: Scanner, candidate: Scanner) -> bool:
                             ] += 1
     # the most common orientation
     [[[permutation, orientation, offset], count]] = translation.most_common(1)
-    # safety measure in case we did not manage to find a reorientation
-    if count < 6:
+    # safety measure in case we did not manage to find a clear reorientation
+    if len(translation) > 1 and count < 2 * translation.most_common(2)[-1][1]:
         return False
     candidate.reorient(permutation, orientation, offset)
     return True
