@@ -1,5 +1,6 @@
 from io import StringIO
 from typing import Iterable
+from functools import lru_cache
 
 
 # The standard approach for sparse Black/White images is a set of "switched on" pixels
@@ -35,9 +36,11 @@ def solve(in_stream: StringIO) -> tuple[object, object]:
     long_image = image
     for _ in range(48):
         long_image = enhance(long_image, key)
+    neighbours.cache_clear()
     return len(image[0]), len(long_image[0])
 
 
+@lru_cache(maxsize=None)
 def neighbours(row, column) -> Iterable[tuple[int, int]]:
     """Compute the neighbour positions of (row, column)"""
     return [
