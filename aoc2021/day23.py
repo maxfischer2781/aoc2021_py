@@ -28,7 +28,7 @@ def solve(in_stream: StringIO) -> tuple[object, object]:
         frozenset({(home, 1), (home, 2)})
         for home in AMPHIPOD_HOMES.values()
     )
-    minimum_path, minimum_cost = a_star(
+    minimum_cost = a_star(
         initial,
         expected,
         neighbours=moves,
@@ -40,7 +40,7 @@ def solve(in_stream: StringIO) -> tuple[object, object]:
         frozenset({(home, 1), (home, 2), (home, 3), (home, 4)})
         for home in AMPHIPOD_HOMES.values()
     )
-    _, minimum_cost_expanded = a_star(
+    minimum_cost_expanded = a_star(
         expanded_initial,
         expanded_expected,
         neighbours=moves,
@@ -243,21 +243,20 @@ def a_star(
     distance: Callable[[H, H], int],
     heuristic: Callable[[H, H], int],
 ) -> tuple[H, int]:
-    parents: dict[H, H] = {}
     costs: dict[H, int] = defaultdict(lambda: sys.maxsize, {start: 0})
     visited: set[H] = set()
+    # store heuristic-cost, cost and node
     to_visit = Heap([(0, 0, start)])
     while to_visit:
         _, cost, current = to_visit.pop()
         visited.add(current)
         if current == target:
-            return path(current, parents), cost
+            return cost
         for neighbour in neighbours(current):
             if neighbour in visited:
                 pass
             new_cost = cost + distance(current, neighbour)
             if new_cost < costs[neighbour]:
-                parents[neighbour] = current
                 costs[neighbour] = new_cost
                 to_visit.push(
                     (new_cost + heuristic(neighbour, target), new_cost, neighbour)
