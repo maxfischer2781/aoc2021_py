@@ -1,10 +1,5 @@
 from typing import Optional
 
-FORMAT = """
-Part 1: {}
-Part 2: {}
-"""
-
 
 class BinaryPrefixTree:
     __slots__ = ("counts", "children")

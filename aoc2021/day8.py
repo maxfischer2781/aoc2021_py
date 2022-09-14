@@ -1,10 +1,5 @@
 from io import StringIO
 
-FORMAT = """
-Part 1: {}
-Part 2: {}
-"""
-
 
 def solve(in_stream: StringIO):
     patterns = [

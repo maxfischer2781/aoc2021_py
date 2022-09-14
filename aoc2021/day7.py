@@ -1,11 +1,6 @@
 from io import StringIO
 import math
 
-FORMAT = """
-Part 1: {}
-Part 2: {}
-"""
-
 
 def solve(in_stream: StringIO):
     start_positions = list(map(int, in_stream.read().split(",")))

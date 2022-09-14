@@ -1,10 +1,5 @@
 import operator
 
-FORMAT = """
-Part 1: {}
-Part 2: {}
-"""
-
 
 def solve(in_stream):
     data = list(in_stream)

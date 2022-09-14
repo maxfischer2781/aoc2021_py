@@ -1,9 +1,3 @@
-FORMAT = """
-Part 1: {}
-Part 2: {}
-"""
-
-
 def solve(in_stream):
     data = list(map(int, in_stream))
     return increases(data), window_increases(data)

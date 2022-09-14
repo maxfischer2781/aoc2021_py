@@ -1,11 +1,6 @@
 from collections import Counter
 from io import StringIO
 
-FORMAT = """
-Part 1: {}
-Part 2: {}
-"""
-
 
 def solve(in_stream: StringIO):
     start_population = list(map(int, in_stream.read().split(",")))

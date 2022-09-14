@@ -1,11 +1,6 @@
 from typing import Iterator
 from copy import deepcopy
 
-FORMAT = """
-Part 1: {}
-Part 2: {}
-"""
-
 
 class BingoBoard:
     def __init__(self, board: list[list[int]]):

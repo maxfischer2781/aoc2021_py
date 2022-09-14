@@ -1,11 +1,6 @@
 from io import StringIO
 from math import prod
 
-FORMAT = """
-Part 1: {}
-Part 2: {}
-"""
-
 
 def solve(in_stream: StringIO):
     heightmap = [[int(point) for point in row.strip()] for row in in_stream]

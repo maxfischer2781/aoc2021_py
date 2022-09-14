@@ -1,11 +1,6 @@
 from typing import Iterator
 from collections import Counter
 
-FORMAT = """
-Part 1: {}
-Part 2: {}
-"""
-
 
 def read_lines(in_stream: Iterator[str]):
     """Parse the (x0, y0) -> (x1, y1) format"""
