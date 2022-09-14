@@ -14,6 +14,10 @@ Starting at day 5, the code includes comments on coding patterns and algorithms.
 This should keep the code understandable even for people new to Python or
 not familiar with the specific algorithm. 🤔
 
+There are *no solutions* for day 24. 😢
+It's a nice puzzle but not exactly a coding challenge without
+diving deep into logical solvers. 🤷‍
+
 Usage 🎅🤶
 --------
 
