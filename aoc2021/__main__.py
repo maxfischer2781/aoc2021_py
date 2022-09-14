@@ -74,5 +74,4 @@ CLI.add_argument(
 
 opts = CLI.parse_args()
 for d in opts.DAY:
-    assert d in SOLUTIONS, f"days {', '.join(map(str, SOLUTIONS))} available, not {d}"
     run_solution(d, opts.example, opts.data)
