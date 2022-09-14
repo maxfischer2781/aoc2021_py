@@ -68,8 +68,8 @@ CLI.add_argument("-e", "--example", action="store_true", help="use example data"
 CLI.add_argument(
     "--data",
     type=pathlib.Path,
-    default=pathlib.Path(__file__).parent.parent / "data",
-    help="path to directory in which data is stored",
+    default=pathlib.Path.cwd() / "data",
+    help="path to directory with daily input",
 )
 
 opts = CLI.parse_args()

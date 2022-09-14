@@ -18,6 +18,8 @@ Usage 🎅🤶
 --------
 
 The module is directly executable from the CLI.
+Daily input data is searched inside `./data/` named
+`dayXY.txt` or `dayXY_ex.txt` for examples.
 
 .. code:: bash
 
