@@ -26,9 +26,8 @@ class BingoBoard:
     def draw(self, number: int):
         """Mark the current drawn `number` on the board, return whether we hit Bingo"""
         # check whether we remove anything at all before going through all combinations
-        numbers = len(self.numbers)
-        self.numbers.discard(number)
-        if len(self.numbers) < numbers:
+        if number in self.numbers:
+            self.numbers.discard(number)
             for combination in self.combinations:
                 combination.discard(number)
                 if not combination:
