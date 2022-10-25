@@ -1,8 +1,19 @@
+# Goal: Given a sequence of Bingo numbers, find the winner/loser.
+# This is a straightforward "interpret the instructions" approach.
 from typing import Iterator
 from copy import deepcopy
 
 
 class BingoBoard:
+    """
+    Representation of a bingo board
+
+    This type is optimised for marking of drawn numbers and checking if done.
+    For the former, we keep a `set` of numbers on the board; this allows to
+    quickly check if anything needs to be marked.
+    For the latter, we keep *all* rows and columns; this allows to quickly check
+    if a row or columns is done.
+    """
     def __init__(self, board: list[list[int]]):
         #: the combinations needed to win, i.e. horizontal/vertical groups
         self.combinations: list[set[int]] = [set(row) for row in board] + [
@@ -27,6 +38,7 @@ class BingoBoard:
 
 def read_input(data: Iterator[str]):
     """Parse the input into drawn numbers and :py:class:`~.BingoBoard` s"""
+    # the first line (`next(data)`) is a comma-separate (`.split(",")`) integer list
     numbers = list(map(int, next(data).strip().split(",")))
     yield numbers
     if next(data) != "\n":

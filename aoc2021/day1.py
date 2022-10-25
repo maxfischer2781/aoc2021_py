@@ -1,3 +1,10 @@
+# Task: Given a sequence of numbers,
+# a) count how often a number is larger than its successor number, and
+# b) count how often a window is larger than its overlapping successor.
+# Say we have 1, 1, 2, 3, 3, ... then
+# for a) we ask 1 < 1, 1 < 2, ... and
+# for b) we ask 1 + 1 + 2 < 1 + 2 + 3, ...
+
 def solve(in_stream):
     data = list(map(int, in_stream))
     return increases(data), window_increases(data)

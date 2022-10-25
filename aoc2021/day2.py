@@ -1,3 +1,5 @@
+# Task: Given a sequence of navigation instructions find the end coordinate.
+# This is straightforward to solve by interpreting the instructions directly.
 import operator
 
 
